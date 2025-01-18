@@ -1,7 +1,18 @@
 require('dotenv').config();
-const Document = require('./Document');
+const express = require('express');
+const app = express();
+const cors = require('cors');
+const Document = require('./models/Document');
 const connectDB = require("./config/db");
+const authRoute = require('./routes/authRoute');
+const roomRoute = require('./routes/roomRoute');
 
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.static('public'))
+
+// database connection
 connectDB();
 
 const io = require("socket.io")(3001, {
@@ -39,3 +50,21 @@ async function findOrCreateDocument(id) {
     data: defaultValue,
   });
 }
+
+
+app.use('/api/auth', authRoute);
+app.use('/api/rooms', roomRoute);
+
+
+// Rest API
+app.get("/", (req, res) => {
+  res.send({
+      msg: "welcome"
+  });
+});
+
+// Start the server
+const PORT = process.env.PORT || 3000; // Fallback to port 5000 if not set
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});

@@ -54,3 +54,51 @@ body{
     display: none;
   }
 }
+
+
+
+
+/* for  */
+
+.homepage {
+  max-width: 600px;
+  margin: 20px auto;
+  text-align: center;
+}
+
+.homepage input {
+  padding: 10px;
+  margin: 10px;
+  width: 70%;
+}
+
+.homepage button {
+  padding: 10px 20px;
+  margin: 10px;
+  cursor: pointer;
+}
+
+.homepage ul {
+  list-style: none;
+  padding: 0;
+}
+
+.homepage li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.homepage li button {
+  padding: 5px 10px;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.homepage li span {
+  flex: 1;
+}
+
