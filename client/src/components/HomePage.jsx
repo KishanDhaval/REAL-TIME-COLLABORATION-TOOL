@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosConfig";
 import { useAuthContext } from "../hooks/useAuthContext";
 import toast from "react-hot-toast";
+import "./homePage.css"; // Import custom CSS
 
 const HomePage = () => {
   const [rooms, setRooms] = useState([]);
@@ -10,7 +11,6 @@ const HomePage = () => {
   const [roomIdInput, setRoomIdInput] = useState("");
   const navigate = useNavigate();
   const { user } = useAuthContext();
-
 
   // Fetch rooms for the logged-in user
   useEffect(() => {
@@ -93,60 +93,53 @@ const HomePage = () => {
     }
   };
 
-  
   return (
     <div className="homepage">
-      <h1>Welcome {`${user.name}`}</h1>
+      <header>
+        <h1>Welcome {user.name}</h1>
+      </header>
 
-      <div>
-        <h2>Create a New Room</h2>
-        <input
-          type="text"
-          value={roomName}
-          onChange={(e) => setRoomName(e.target.value)}
-          placeholder="Enter room name"
-        />
-        <button onClick={handleCreateRoom}>Create Room</button>
+      <div className="room-container">
+        <div className="create-room">
+          <h2>Create a Room</h2>
+          <input
+            type="text"
+            value={roomName}
+            onChange={(e) => setRoomName(e.target.value)}
+            placeholder="Enter Room Name"
+          />
+          <button className="btn" onClick={handleCreateRoom}>Create Room</button>
+        </div>
+
+        <div className="join-room">
+          <h2>Join a Room</h2>
+          <input
+            type="text"
+            value={roomIdInput}
+            onChange={(e) => setRoomIdInput(e.target.value)}
+            placeholder="Enter Room ID"
+          />
+          <button className="btn" onClick={handleJoinRoom}>Join Room</button>
+        </div>
       </div>
 
-      <div>
-        <h2>Join a Room</h2>
-        <input
-          type="text"
-          value={roomIdInput}
-          onChange={(e) => setRoomIdInput(e.target.value)}
-          placeholder="Enter room ID"
-        />
-        <button onClick={handleJoinRoom}>Join Room</button>
+      <div className="rooms-list">
+        <h2>Your Rooms</h2>
+        <ul>
+          {rooms.map((room) => (
+            <li key={room._id} className="room-item">
+              <div className="room-info">
+                <span>{room.roomName} (ID: {room.roomId})</span>
+              </div>
+              <div className="room-actions">
+                <button className="btn join" onClick={() => navigate(`/document/${room.roomId}`)}>Join</button>
+                <button className="btn copy" onClick={() => handleCopyRoomId(room.roomId)}>Copy ID</button>
+                <button className="btn leave" onClick={() => handleLeaveRoom(room.roomId)}>Leave</button>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
-
-      <ul>
-        {rooms.map((room) => (
-          <li
-            key={room._id}
-            style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}
-          >
-            <span style={{ flex: 1 }}>
-              {room.roomName} (ID: {room.roomId})
-            </span>
-            <button
-              onClick={() => navigate(`/document/${room.roomId}`)}
-              style={{ marginRight: "10px" }}
-            >
-              Join
-            </button>
-            <button
-              onClick={() => handleCopyRoomId(room.roomId)}
-              style={{ marginRight: "10px" }}
-            >
-              Copy Room ID
-            </button>
-            <button onClick={() => handleLeaveRoom(room.roomId)} style={{ color: "red" }}>
-              Leave Room
-            </button>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 };

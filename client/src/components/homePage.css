@@ -1,0 +1,128 @@
+/* Overall Homepage Styles */
+.homepage {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 2rem;
+    background-color: #f7f7f7;
+    color: #333;
+  }
+  
+  header h1 {
+    text-align: center;
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 2rem;
+  }
+  
+  /* Room Container - Creating & Joining */
+  .room-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+  
+  .create-room, .join-room {
+    width: 48%;
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .create-room h2, .join-room h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #007bff;
+  }
+  
+  .create-room input, .join-room input {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+  }
+  
+  .create-room button, .join-room button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #007bff;
+    border: none;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .create-room button:hover, .join-room button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Rooms List */
+  .rooms-list {
+    margin-top: 2rem;
+  }
+  
+  .rooms-list h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #007bff;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .room-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+  }
+  
+  .room-info {
+    font-size: 1rem;
+    font-weight: bold;
+  }
+  
+  .room-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .room-actions button {
+    padding: 0.8rem;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .room-actions .join {
+    background-color: #e3e3e36a;
+    color: rgb(0, 9, 52);
+  }
+  
+  .room-actions .join:hover {
+    background-color: #e3e3e36a;
+  }
+  
+  .room-actions .copy {
+    background-color: #e3e3e36a;
+    color: rgb(0, 9, 52);
+  }
+  
+  .room-actions .copy:hover {
+    background-color: #e3e3e36a;
+  }
+  
+  .room-actions .leave {
+    background-color: #e3e3e36a;
+    color: rgb(232, 0, 0);
+  }
+  
