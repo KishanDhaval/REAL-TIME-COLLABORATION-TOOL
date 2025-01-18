@@ -23,33 +23,50 @@ const io = require("socket.io")(3001, {
 });
 
 io.on("connection", (socket) => {
-  socket.on("get-document", async (documentId) => {
-    const document = await findOrCreateDocument(documentId);
-    socket.join(documentId);
-    socket.emit('load-document', document.data);
+  socket.on("get-document", async (roomId) => {
+    try {
+      const room = await createOrFindRoom(roomId, `Room-${roomId}`); // Default room name
+      socket.join(roomId); // Join the socket to the room
 
-    socket.on("send-changes", (delta) => {
-      socket.broadcast.to(documentId).emit("receive-changes", delta);
-    });
+      socket.emit('load-document', room.documentData); // Send document data
 
-    socket.on('save-document', async (data) => {
-      await Document.findByIdAndUpdate(documentId, { data });
-    });
+      socket.on("send-changes", (delta) => {
+        socket.broadcast.to(roomId).emit("receive-changes", delta); // Emit changes to other clients in the room
+      });
+
+      socket.on("save-document", async (data) => {
+        await Room.findOneAndUpdate(
+          { roomId: roomId },
+          { documentData: data }, // Save as object
+          { new: true }
+        );
+      });
+    } catch (err) {
+      console.error(err.message);
+      socket.emit("error", "Failed to load or create document.");
+    }
   });
 });
 
-const defaultValue = "";
-async function findOrCreateDocument(id) {
-  if (id == null) return;
 
-  const document = await Document.findById(id);
-  if (document) return document;
+const Room = require('./models/roomModel');
 
-  return await Document.create({
-    _id: id,
-    data: defaultValue,
-  });
+// Create or find a room with its associated document
+async function createOrFindRoom(roomId, roomName) {
+  let room = await Room.findOne({ roomId });
+
+  if (!room) {
+    // Room doesn't exist, create a new one
+    room = await Room.create({
+      roomId,
+      roomName,
+      documentData: "", // Initialize document with empty content
+    });
+  }
+
+  return room;
 }
+
 
 app.use('/api/auth', authRoute);
 app.use('/api/rooms', roomRoute);
