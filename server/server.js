@@ -10,7 +10,7 @@ const roomRoute = require('./routes/roomRoute');
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'))
+app.use(express.static('public'));
 
 // database connection
 connectDB();
@@ -51,10 +51,8 @@ async function findOrCreateDocument(id) {
   });
 }
 
-
 app.use('/api/auth', authRoute);
 app.use('/api/rooms', roomRoute);
-
 
 // Rest API
 app.get("/", (req, res) => {

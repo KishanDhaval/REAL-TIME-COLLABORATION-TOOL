@@ -1,20 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosConfig";
+import { useAuthContext } from "../hooks/useAuthContext";
+import toast from "react-hot-toast";
 
 const HomePage = () => {
   const [rooms, setRooms] = useState([]);
   const [roomName, setRoomName] = useState("");
   const [roomIdInput, setRoomIdInput] = useState("");
   const navigate = useNavigate();
+  const { user } = useAuthContext();
 
-  // Fetch user-specific rooms on mount
+
+  // Fetch rooms for the logged-in user
   useEffect(() => {
     const fetchRooms = async () => {
       try {
         const { data } = await axiosInstance.get("/api/rooms/user");
         setRooms(data);
       } catch (err) {
+        toast.error("Failed to fetch rooms.");
         console.error(err.message);
       }
     };
@@ -22,68 +27,77 @@ const HomePage = () => {
     fetchRooms();
   }, []);
 
-  // Create a new room
+  // handleCreateRoom function
   const handleCreateRoom = async () => {
     if (!roomName.trim()) {
-      alert("Room name cannot be empty!");
+      toast.error("Room name cannot be empty!");
       return;
     }
 
     try {
-      const { data } = await axiosInstance.post(
-        "/api/rooms/create",
-        { roomName, roomId: Math.random().toString(36).substr(2, 8) }
-      );
+      const { data } = await axiosInstance.post("/api/rooms/create", {
+        roomName,
+        roomId: Math.random().toString(36).substr(2, 8),
+      });
       setRooms((prevRooms) => [...prevRooms, data]);
       setRoomName("");
+      toast.success("Room created successfully!");
     } catch (err) {
+      toast.error("Error creating room.");
       console.error(err.message);
-      alert("Error creating room!");
     }
   };
 
-  // Join a room by its ID
+  // handleJoinRoom function
   const handleJoinRoom = async () => {
     if (!roomIdInput.trim()) {
-      alert("Please enter a valid room ID!");
+      toast.error("Please enter a valid room ID!");
       return;
     }
 
     try {
-      // Save the room to the user's list
       const { data } = await axiosInstance.post("/api/rooms/join", {
         roomId: roomIdInput,
       });
-
-      // Add the room to the state
       setRooms((prevRooms) => [...prevRooms, data]);
-
-      // Navigate to the room
       navigate(`/document/${roomIdInput}`);
+      toast.success("Successfully joined the room!");
     } catch (err) {
+      toast.error("Error joining the room!");
       console.error(err.message);
-      alert("Error joining the room!");
     }
   };
 
-  // Copy room ID to clipboard
+  // handleCopyRoomId function
   const handleCopyRoomId = (roomId) => {
     navigator.clipboard.writeText(roomId).then(
       () => {
-        alert(`Room ID "${roomId}" copied to clipboard!`);
+        toast.success(`Room ID "${roomId}" copied to clipboard!`);
       },
       (err) => {
+        toast.error("Failed to copy Room ID.");
         console.error("Failed to copy Room ID: ", err);
-        alert("Failed to copy Room ID!");
       }
     );
   };
 
+  // handleLeaveRoom function
+  const handleLeaveRoom = async (roomId) => {
+    try {
+      await axiosInstance.post("/api/rooms/leave", { roomId });
+      setRooms((prevRooms) => prevRooms.filter((room) => room.roomId !== roomId));
+      toast.success("You have left the room successfully!");
+    } catch (err) {
+      toast.error("Error leaving the room!");
+      console.error(err.message);
+    }
+  };
+
+  
   return (
     <div className="homepage">
-      <h1>Welcome to the Room Manager</h1>
+      <h1>Welcome {`${user.name}`}</h1>
 
-      {/* Room Creation */}
       <div>
         <h2>Create a New Room</h2>
         <input
@@ -95,7 +109,6 @@ const HomePage = () => {
         <button onClick={handleCreateRoom}>Create Room</button>
       </div>
 
-      {/* Join Room */}
       <div>
         <h2>Join a Room</h2>
         <input
@@ -107,30 +120,33 @@ const HomePage = () => {
         <button onClick={handleJoinRoom}>Join Room</button>
       </div>
 
-      {/* List User's Rooms */}
-      <div>
-        <h2>Your Rooms</h2>
-        {rooms.length > 0 ? (
-          <ul>
-            {rooms.map((room) => (
-              <li
-                key={room._id}
-                style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}
-              >
-                <span style={{ flex: 1 }}>
-                  {room.roomName} (ID: {room.roomId})
-                </span>
-                <button onClick={() => navigate(`/document/${room.roomId}`)} style={{ marginRight: "10px" }}>
-                  Join
-                </button>
-                <button onClick={() => handleCopyRoomId(room.roomId)}>Copy Room ID</button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No rooms found. Create one to get started!</p>
-        )}
-      </div>
+      <ul>
+        {rooms.map((room) => (
+          <li
+            key={room._id}
+            style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}
+          >
+            <span style={{ flex: 1 }}>
+              {room.roomName} (ID: {room.roomId})
+            </span>
+            <button
+              onClick={() => navigate(`/document/${room.roomId}`)}
+              style={{ marginRight: "10px" }}
+            >
+              Join
+            </button>
+            <button
+              onClick={() => handleCopyRoomId(room.roomId)}
+              style={{ marginRight: "10px" }}
+            >
+              Copy Room ID
+            </button>
+            <button onClick={() => handleLeaveRoom(room.roomId)} style={{ color: "red" }}>
+              Leave Room
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
