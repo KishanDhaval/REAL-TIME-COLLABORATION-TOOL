@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const Document = require('./models/Document');
 const connectDB = require("./config/db");
 const authRoute = require('./routes/authRoute');
 const roomRoute = require('./routes/roomRoute');
