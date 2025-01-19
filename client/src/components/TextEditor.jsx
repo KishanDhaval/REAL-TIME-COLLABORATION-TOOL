@@ -2,8 +2,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import { io } from "socket.io-client";
-import { useParams } from "react-router-dom";
-
+import { useParams, useNavigate } from "react-router-dom";
+import { TbLogout2 } from "react-icons/tb";
+  
 const TOOLBAR_OPTIONS = [
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
   [{ font: [] }],
@@ -21,10 +22,9 @@ const TextEditor = () => {
   const [socket, setSocket] = useState();
   const [quill, setQuill] = useState();
   const { id: documentId } = useParams();
+  const navigate = useNavigate(); // React Router's navigate function
 
-
-
-  // socket connection
+  // Socket connection
   useEffect(() => {
     const s = io("http://localhost:3001");
     setSocket(s);
@@ -34,24 +34,24 @@ const TextEditor = () => {
     };
   }, []);
 
-  // document loading
+  // Document loading
   useEffect(() => {
     if (socket == null || quill == null) return;
 
-    socket.on('load-document', document => {
+    socket.on("load-document", (document) => {
       quill.setContents(document);
       quill.enable();
     });
 
-    socket.emit('get-document', documentId);
+    socket.emit("get-document", documentId);
   }, [socket, quill, documentId]);
 
-  // saving document based on interval
+  // Saving document at intervals
   useEffect(() => {
     if (socket == null || quill == null) return;
 
     const interval = setInterval(() => {
-      socket.emit('save-document', quill.getContents());
+      socket.emit("save-document", quill.getContents());
     }, SAVE_INTERVAL);
 
     return () => {
@@ -59,36 +59,34 @@ const TextEditor = () => {
     };
   }, [socket, quill]);
 
-  // reflecting changes to all same rooms 
+  // Reflecting changes in the same room
   useEffect(() => {
     if (socket == null || quill == null) return;
 
-    const handler = delta => {
+    const handler = (delta) => {
       quill.updateContents(delta);
     };
-    socket.on('receive-changes', handler);
+    socket.on("receive-changes", handler);
 
     return () => {
-      socket.off('receive-changes', handler);
+      socket.off("receive-changes", handler);
     };
   }, [socket, quill]);
 
-  // sending changes 
+  // Sending changes
   useEffect(() => {
     if (socket == null || quill == null) return;
 
     const handler = (delta, oldDelta, source) => {
       if (source !== "user") return;
-      socket.emit('send-changes', delta);
+      socket.emit("send-changes", delta);
     };
-    quill.on('text-change', handler);
+    quill.on("text-change", handler);
 
     return () => {
-      quill.off('text-change', handler);
+      quill.off("text-change", handler);
     };
   }, [socket, quill]);
-
-  
 
   const wrapperRef = useCallback((wrapper) => {
     if (wrapper == null) return;
@@ -101,11 +99,22 @@ const TextEditor = () => {
       modules: { toolbar: TOOLBAR_OPTIONS },
     });
     q.enable(false);
-    q.setText('Loading...');
+    q.setText("Loading...");
     setQuill(q);
   }, []);
 
-  return <div className="container" ref={wrapperRef}></div>;
+  return (
+    <>
+      <button
+        className="back-btn"
+        onClick={() => navigate(-1)} // Go back to the previous page
+        title="Go Back"
+      >
+        <TbLogout2 /> 
+      </button>
+      <div className="container" ref={wrapperRef}></div>
+    </>
+  );
 };
 
 export default TextEditor;

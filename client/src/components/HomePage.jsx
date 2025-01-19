@@ -4,6 +4,7 @@ import axiosInstance from "../utils/axiosConfig";
 import { useAuthContext } from "../hooks/useAuthContext";
 import toast from "react-hot-toast";
 import "./homePage.css"; // Import custom CSS
+import { useLogout } from "../hooks/useLogout";
 
 const HomePage = () => {
   const [rooms, setRooms] = useState([]);
@@ -11,6 +12,7 @@ const HomePage = () => {
   const [roomIdInput, setRoomIdInput] = useState("");
   const navigate = useNavigate();
   const { user } = useAuthContext();
+  const { logout } = useLogout(); // Get the logout function
 
   // Fetch rooms for the logged-in user
   useEffect(() => {
@@ -85,7 +87,9 @@ const HomePage = () => {
   const handleLeaveRoom = async (roomId) => {
     try {
       await axiosInstance.post("/api/rooms/leave", { roomId });
-      setRooms((prevRooms) => prevRooms.filter((room) => room.roomId !== roomId));
+      setRooms((prevRooms) =>
+        prevRooms.filter((room) => room.roomId !== roomId)
+      );
       toast.success("You have left the room successfully!");
     } catch (err) {
       toast.error("Error leaving the room!");
@@ -96,7 +100,12 @@ const HomePage = () => {
   return (
     <div className="homepage">
       <header>
-        <h1>Welcome {user.name}</h1>
+        <div className="header-content">
+          <h1>Welcome {user.name}</h1>
+          <button className="logout-btn" onClick={logout}>
+            Logout
+          </button>
+        </div>
       </header>
 
       <div className="room-container">
@@ -108,7 +117,9 @@ const HomePage = () => {
             onChange={(e) => setRoomName(e.target.value)}
             placeholder="Enter Room Name"
           />
-          <button className="btn" onClick={handleCreateRoom}>Create Room</button>
+          <button className="btn" onClick={handleCreateRoom}>
+            Create Room
+          </button>
         </div>
 
         <div className="join-room">
@@ -119,7 +130,9 @@ const HomePage = () => {
             onChange={(e) => setRoomIdInput(e.target.value)}
             placeholder="Enter Room ID"
           />
-          <button className="btn" onClick={handleJoinRoom}>Join Room</button>
+          <button className="btn" onClick={handleJoinRoom}>
+            Join Room
+          </button>
         </div>
       </div>
 
@@ -129,12 +142,29 @@ const HomePage = () => {
           {rooms.map((room) => (
             <li key={room._id} className="room-item">
               <div className="room-info">
-                <span>{room.roomName} (ID: {room.roomId})</span>
+                <span>
+                  {room.roomName} (ID: {room.roomId})
+                </span>
               </div>
               <div className="room-actions">
-                <button className="btn join" onClick={() => navigate(`/document/${room.roomId}`)}>Join</button>
-                <button className="btn copy" onClick={() => handleCopyRoomId(room.roomId)}>Copy ID</button>
-                <button className="btn leave" onClick={() => handleLeaveRoom(room.roomId)}>Leave</button>
+                <button
+                  className="btn join"
+                  onClick={() => navigate(`/document/${room.roomId}`)}
+                >
+                  Join
+                </button>
+                <button
+                  className="btn copy"
+                  onClick={() => handleCopyRoomId(room.roomId)}
+                >
+                  ID
+                </button>
+                <button
+                  className="btn leave"
+                  onClick={() => handleLeaveRoom(room.roomId)}
+                >
+                  Leave
+                </button>
               </div>
             </li>
           ))}

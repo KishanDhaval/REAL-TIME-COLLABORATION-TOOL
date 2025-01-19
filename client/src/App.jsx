@@ -5,8 +5,8 @@ import TextEditor from "./components/TextEditor";
 import "./index.css";
 import HomePage from "./components/HomePage";
 import { useAuthContext } from "./hooks/useAuthContext";
-import Register from "./pages/Auth/Register";
-import Login from "./pages/Auth/Login";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
 import { Navigate } from "react-router";
 import PrivateRoute from "./components/Auth/PrivateRoute";
 

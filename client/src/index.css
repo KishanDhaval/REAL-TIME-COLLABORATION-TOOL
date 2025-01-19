@@ -102,3 +102,22 @@ body{
   flex: 1;
 }
 
+
+
+
+/* for back button */
+
+
+.back-btn {
+  position: fixed;
+  top: 6px;
+  left: 5px;
+  z-index: 2;
+  border:none;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+
+
