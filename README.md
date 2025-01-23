@@ -62,12 +62,11 @@ Make sure you have the following installed:
     # Install server dependencies
    cd server
    npm install
-   ```
 
-# Install client dependencies
+    # Install client dependencies
 
-cd ../client
-npm install
+    cd ../client
+    npm install
 
     ```
 
