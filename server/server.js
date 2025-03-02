@@ -5,11 +5,12 @@ const cors = require('cors');
 const connectDB = require("./config/db");
 const authRoute = require('./routes/authRoute');
 const roomRoute = require('./routes/roomRoute');
-
+const path = require("path")
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
+const _dirname = path.resolve();
 
 // database connection
 connectDB();
@@ -70,12 +71,12 @@ async function createOrFindRoom(roomId, roomName) {
 app.use('/api/auth', authRoute);
 app.use('/api/rooms', roomRoute);
 
-// Rest API
-app.get("/", (req, res) => {
-  res.send({
-      msg: "welcome"
-  });
+
+app.use(express.static(path.join(_dirname , "/client/dist")))
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(_dirname, 'client', 'dist', 'index.html'));
 });
+
 
 // Start the server
 const PORT = process.env.PORT || 3000; // Fallback to port 5000 if not set
