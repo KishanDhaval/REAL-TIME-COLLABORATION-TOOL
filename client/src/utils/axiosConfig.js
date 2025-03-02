@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create a custom axios instance
 const axiosInstance = axios.create({
-  baseURL: 'https://real-time-collaboration-tool-efu2.onrender.com', // Ensure this is set correctly
+  baseURL: 'https://real-time-collaboration-tool-mqya.onrender.com', // Ensure this is set correctly
 });
 
 // Add a request interceptor to set the Authorization header

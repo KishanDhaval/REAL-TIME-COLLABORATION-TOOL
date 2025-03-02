@@ -26,7 +26,7 @@ const TextEditor = () => {
 
   // Socket connection
   useEffect(() => {
-    const s = io("https://real-time-collaboration-tool-efu2.onrender.com");
+    const s = io("https://real-time-collaboration-tool-mqya.onrender.com");
     setSocket(s);
 
     return () => {
