@@ -13,7 +13,7 @@
 "MENTER": NEELA SANTOSH
 
 
-[🚀 Click here to visit the live chat app](https://real-time-collaboration-tool-mqya.onrender.com)
+[🚀 Click here to visit the live Collaboration app](https://real-time-collaboration-tool-mqya.onrender.com)
 
 A real-time collaborative tool built with the MERN stack and Socket.io. This application allows users to collaboratively edit files in real-time within specific rooms. Users can create rooms, join them using a unique room ID, and collaborate seamlessly.
 
