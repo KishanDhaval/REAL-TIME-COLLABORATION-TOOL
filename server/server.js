@@ -15,7 +15,24 @@ const _dirname = path.resolve();
 // database connection
 connectDB();
 
-const io = require("socket.io")(3001, {
+
+app.use('/api/auth', authRoute);
+app.use('/api/rooms', roomRoute);
+
+
+app.use(express.static(path.join(_dirname , "/client/dist")))
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(_dirname, 'client', 'dist', 'index.html'));
+});
+
+
+// Start the server
+const PORT = process.env.PORT || 3000; // Fallback to port 5000 if not set
+const server = app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+const io = require("socket.io")(server, {
   cors: {
     origin: "http://localhost:5173", // Allow requests from your frontend
     methods: ["GET", "POST"], // Allow GET and POST methods
@@ -66,20 +83,3 @@ async function createOrFindRoom(roomId, roomName) {
 
   return room;
 }
-
-
-app.use('/api/auth', authRoute);
-app.use('/api/rooms', roomRoute);
-
-
-app.use(express.static(path.join(_dirname , "/client/dist")))
-app.get('*', (req, res) => {
-    res.sendFile(path.resolve(_dirname, 'client', 'dist', 'index.html'));
-});
-
-
-// Start the server
-const PORT = process.env.PORT || 3000; // Fallback to port 5000 if not set
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
